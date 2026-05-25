@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Directório de Salas - BEES & Global</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen p-4 md:p-8">
+
+    <div class="max-w-5xl mx-auto">
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Directório de Salas BEES e Global</h1>
+            <input type="text" id="searchInput" placeholder="Pesquisar por nome ou número da sala..." 
+                   class="w-full max-w-lg p-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 outline-none">
+        </header>
+
+        <div id="directoryContainer" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- As salas serão injetadas aqui -->
+        </div>
+    </div>
+
+    <script>
+        const dadosSalas = [
+            // BEES
+            { bloco: "BEES", andar: "Térreo", lado: "Esquerdo", salas: ["TF 04 - Focus", "T01 - Santo Domingo", "T02 - Colombianos", "TF 01, 02, 03"] },
+            { bloco: "BEES", andar: "Térreo", lado: "Direito", salas: ["T03 - Chaves", "T04 - Frida Kahalho", "T06 - Melo Drama", "T07 - Presidente"] },
+            { bloco: "BEES", andar: "1º Andar", lado: "Esquerdo", salas: ["1.04 - Star Wars", "1.01 - Sant Louis", "1.02 - Toronto", "1.03 - Safari", "1.06 - Castle", "1.05 - Inovação", "1.07 - Mandela"] },
+            { bloco: "BEES", andar: "1º Andar", lado: "Direito", salas: ["1F01, 1F02, 1F03 - Focus Room", "1.08 - Goose Brewhouse"] },
+            { bloco: "BEES", andar: "2º Andar", lado: "Esquerdo", salas: ["2.05 - Buenos Aires", "2.07 - People", "2.06 - Rio de Janeiro", "2.03 - Zeca Pagodinho", "2.02 - NY+SP - Vezza's Room", "2.01 - Leadership"] },
+            { bloco: "BEES", andar: "2º Andar", lado: "Direito", salas: ["2F01, 2F02, 2F03 - Focus Room", "2.04 - Camarote Brahma"] },
+            { bloco: "BEES", andar: "3º Andar", lado: "Esquerdo", salas: ["3.03 - Leuven", "3.02 - Meeting", "3.05 - Stephen Hawking", "3.04 - Auditório"] },
+            { bloco: "BEES", andar: "3º Andar", lado: "Direito", salas: ["3F01, 3F02, 3F03 - Focus Room", "3.06 - Cerveja Deus"] },
+            
+            // Global - Atualizado com base nas fotos
+            { bloco: "Global", andar: "1º Andar", lado: "Lado Direito", salas: ["1.09 - Wals Dubbel", "1.08 - Wals Niobium", "1.07 - Session Citra", "1.06 - Colorado Cauim", "1.02 - Colorado Indica", "1.01 - Colorado Tola do Urso"] },
+            { bloco: "Global", andar: "1º Andar", lado: "Lado Esquerdo", salas: ["1F02 - Focus Room", "1F01 - Sala Lagoinha (Cor Laranja)"] },
+            { bloco: "Global", andar: "2º Andar", lado: "Lado Direito", salas: ["2.09 - Becks After", "2.03 - Star", "2.01 - Hoegaarden", "2.02 - Adamy"] },
+            { bloco: "Global", andar: "2º Andar", lado: "Lado Esquerdo", salas: ["2.08 - Becks Esquenta", "2.07 - Stella Artois", "2.06 - Tripel Karmeliet (Setor Corona - Aurora)"] },
+            { bloco: "Global", andar: "3º Andar", lado: "Lado Direito", salas: ["3.08 - Bud Light Seltzer", "3.06 - Goose 312", "3.01 - Goose Green Line"] },
+            { bloco: "Global", andar: "3º Andar", lado: "Lado Esquerdo", salas: ["3.07 - Bud Light Platinum", "3.05 - Goose IPA", "3.04 - Bourbon Country (Cor Cinza)"] }
+        ];
+
+        const container = document.getElementById('directoryContainer');
+        const searchInput = document.getElementById('searchInput');
+
+        function render(filter = "") {
+            container.innerHTML = "";
+            const lower = filter.toLowerCase();
+
+            dadosSalas.forEach(bloco => {
+                const salasFiltradas = bloco.salas.filter(s => s.toLowerCase().includes(lower));
+                if (salasFiltradas.length > 0) {
+                    const card = document.createElement('div');
+                    card.className = "bg-white p-6 rounded-xl shadow-md border-t-4 " + (bloco.bloco === "BEES" ? "border-blue-500" : "border-amber-500");
+                    card.innerHTML = `
+                        <span class="text-xs font-bold uppercase tracking-wider ${bloco.bloco === "BEES" ? "text-blue-500" : "text-amber-500"}">${bloco.bloco}</span>
+                        <h2 class="text-xl font-bold text-gray-800 mb-2">${bloco.andar} - ${bloco.lado}</h2>
+                        <ul class="space-y-1 text-sm text-gray-600">
+                            ${salasFiltradas.map(s => `<li class="p-1.5 bg-gray-50 rounded">${s}</li>`).join('')}
+                        </ul>
+                    `;
+                    container.appendChild(card);
+                }
+            });
+        }
+
+        searchInput.addEventListener('input', (e) => render(e.target.value));
+        render();
+    </script>
+</body>
+</html>

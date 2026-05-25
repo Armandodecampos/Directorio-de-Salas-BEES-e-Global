@@ -24,29 +24,27 @@
     </header>
 
     <main class="max-w-4xl mx-auto p-4" id="directoryContainer">
-        <!-- O conteúdo será gerado aqui -->
     </main>
 
     <script>
         const dadosSalas = [
             { bloco: "BEES", andar: "Térreo", lado: "Esquerdo", salas: ["TF 04 - Focus", "T01 - Santo Domingo", "T02 - Colombianos", "TF 01, 02, 03"] },
             { bloco: "BEES", andar: "Térreo", lado: "Direito", salas: ["T03 - Chaves", "T04 - Frida Kahalho", "T06 - Melo Drama", "T07 - Presidente"] },
-            { bloco: "BEES", andar: "1º Andar", lado: "Esquerdo", salas: ["1.04 - Star Wars", "1.01 - Sant Louis", "1.02 - Toronto", "1.03 - Safari", "1.06 - Castle", "1.05 - Auditório", "1.07 - Mandela"] },
+            { bloco: "BEES", andar: "1º Andar", lado: "Esquerdo", salas: ["1.04 - Star Wars", "1.01 - Sant Louis", "1.02 - Toronto", "1.03 - Safari", "1.06 - Castle", "1.05 - Auditório (Inovação Reunião)", "1.07 - Mandela"] },
             { bloco: "BEES", andar: "1º Andar", lado: "Direito", salas: ["1F01, 1F02, 1F03 - Focus Room", "1.08 - Goose Brewhouse"] },
-            { bloco: "BEES", andar: "2º Andar", lado: "Esquerdo", salas: ["2.05 - Buenos Aires", "2.07 - People", "2.06 - Rio de Janeiro", "2.03 - Zeca Pagodinho", "2.02 - NY+SP", "2.01 - Leadership"] },
+            { bloco: "BEES", andar: "2º Andar", lado: "Esquerdo", salas: ["2.05 - Buenos Aires", "2.07 - People", "2.06 - Rio de Janeiro", "2.03 - Zeca Pagodinho", "2.02 - NY+SP - Vezza's Room", "2.01 - Leadership"] },
             { bloco: "BEES", andar: "2º Andar", lado: "Direito", salas: ["2F01, 2F02, 2F03 - Focus Room", "2.04 - Camarote Brahma"] },
             { bloco: "BEES", andar: "3º Andar", lado: "Esquerdo", salas: ["3.03 - Leuven", "3.02 - Meeting", "3.05 - Stephen Hawking", "3.04 - Auditório"] },
             { bloco: "BEES", andar: "3º Andar", lado: "Direito", salas: ["3F01, 3F02, 3F03 - Focus Room", "3.06 - Cerveja Deus"] },
-            { bloco: "Global", andar: "Térreo", lado: "Lado Esquerdo", salas: ["Auditorio"] },
-            { bloco: "Global", andar: "1º Andar", lado: "Lado Direito", salas: ["1.02 - Colorado Indica", "1.01 - Toca do Urso", "Sip - Smart", "Switch It Up", "Eat Food", "Ride Right", "1F01/1F02 - Focus", "Sala Lagoinha", "Not For Minors", "Don't Drink", "Pace Your Drink"] },
+            { bloco: "Global", andar: "Térreo", lado: "Lado Esquerdo", salas: ["Auditorio (de frente á padaria)"] },
+            { bloco: "Global", andar: "1º Andar", lado: "Lado Direito", salas: ["1.02 - Colorado Indica", "1.01 - Colorado Toca do Urso", "Sip - Smart", "Switch It Up", "Eat Food", "Ride Right", "1F01 - Focus Room", "1F02 - Focus Room", "Sala Lagoinha (Cor Laranja)", "Not For Minors", "Don't Drink", "Pace Your Drink"] },
             { bloco: "Global", andar: "1º Andar", lado: "Lado Esquerdo", salas: ["1.09 - Wals Dubbel", "1.08 - Wals Niobium", "1.07 - Session Citra", "1.06 - Colorado Cauim"] },
-            { bloco: "Global", andar: "2º Andar", lado: "Lado Direito", salas: ["2.03 - Star", "2.01 - Hoegaarden", "2.02 - Adamy", "Drink Hour", "Stay On", "Balanced", "Cheers"] },
-            { bloco: "Global", andar: "2º Andar", lado: "Lado Esquerdo", salas: ["2.09 - Becks After", "2.08 - Becks Esquenta", "2.07 - Stella Artois", "2.06 - Tripel Karmeliet"] },
+            { bloco: "Global", andar: "2º Andar", lado: "Lado Direito", salas: ["2.03 - Star", "2.01 - Hoegaarden", "2.02 - Adamy", "Drink Hour - Way", "Stay On - Count", "Balanced - Choices", "Cheers to Moderation"] },
+            { bloco: "Global", andar: "2º Andar", lado: "Lado Esquerdo", salas: ["2.09 - Becks After", "2.08 - Becks Esquenta", "2.07 - Stella Artois", "2.06 - Tripel Karmeliet (Corona)"] },
             { bloco: "Global", andar: "3º Andar", lado: "Lado Direito", salas: ["3.01 - Goose Green Line"] },
-            { bloco: "Global", andar: "3º Andar", lado: "Lado Esquerdo", salas: ["3.08 - Bud Light Seltzer", "3.07 - Bud Light Platinum", "3.06 - Goose 312", "3.05 - Goose IPA", "3.04 - Bourbon Country"] }
+            { bloco: "Global", andar: "3º Andar", lado: "Lado Esquerdo", salas: ["3.08 - Bud Light Seltzer", "3.07 - Bud Light Platinum", "3.06 - Goose 312", "3.05 - Goose IPA", "3.04 - Bourbon Country (Cor Cinza)"] }
         ];
 
-        // Função utilitária para remover acentos
         const removeAccents = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
         document.getElementById('printBtn').addEventListener('click', function() {
@@ -64,15 +62,12 @@
         function render(filter = "") {
             const container = document.getElementById('directoryContainer');
             container.innerHTML = "";
-            
-            // Normaliza a busca para ignorar acentos e case
             const normalizedFilter = removeAccents(filter.toLowerCase());
             const terms = normalizedFilter.split(' ').filter(t => t.length > 0);
 
             const grupos = dadosSalas.filter(d => {
                 const raw = `${d.bloco} ${d.andar} ${d.lado} ${d.salas.join(" ")}`;
                 const combined = removeAccents(raw.toLowerCase());
-                // Garante que TODOS os termos de busca existam na string combinada
                 return terms.every(term => combined.includes(term));
             }).reduce((acc, item) => {
                 if (!acc[item.bloco]) acc[item.bloco] = {};

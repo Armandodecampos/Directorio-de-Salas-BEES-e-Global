@@ -5,77 +5,98 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Directório de Salas - BEES & Global</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        .page-break { break-before: page; }
+        @media print { .no-print { display: none !important; } }
+    </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body class="bg-gray-100 min-h-screen pb-10">
 
-    <!-- Cabeçalho Fixo -->
-    <header class="sticky top-0 z-20 bg-gray-100 p-4 md:p-6 border-b border-gray-200">
-        <div class="max-w-5xl mx-auto">
-            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4 text-center">Directório de Salas</h1>
-            <input type="text" id="searchInput" placeholder="Ex: térreo, BEES, 1 andar..." 
-                   class="w-full max-w-lg mx-auto block p-4 text-base rounded-xl border border-gray-300 shadow-sm focus:ring-4 focus:ring-blue-200 outline-none transition-all">
+    <header class="no-print sticky top-0 z-20 bg-gray-100 p-4 border-b border-gray-200">
+        <div class="max-w-4xl mx-auto flex items-center justify-between gap-4">
+            <input type="text" id="searchInput" placeholder="Ex: chaves terreo" 
+                   class="flex-1 p-2 rounded-lg border border-gray-300 shadow-sm outline-none">
+            <button id="printBtn" class="bg-red-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-red-700 shadow-lg cursor-pointer">
+                Baixar PDF A4
+            </button>
         </div>
     </header>
 
-    <main class="max-w-5xl mx-auto p-4 md:p-6">
-        <!-- Container responsivo: 1 coluna em celular, 2 em md+ -->
-        <div id="directoryContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
-            <!-- As salas serão injetadas aqui -->
-        </div>
+    <main class="max-w-4xl mx-auto p-4" id="directoryContainer">
+        <!-- O conteúdo será gerado aqui -->
     </main>
 
     <script>
         const dadosSalas = [
-            // BEES
             { bloco: "BEES", andar: "Térreo", lado: "Esquerdo", salas: ["TF 04 - Focus", "T01 - Santo Domingo", "T02 - Colombianos", "TF 01, 02, 03"] },
             { bloco: "BEES", andar: "Térreo", lado: "Direito", salas: ["T03 - Chaves", "T04 - Frida Kahalho", "T06 - Melo Drama", "T07 - Presidente"] },
-            { bloco: "BEES", andar: "1º Andar", lado: "Esquerdo", salas: ["1.04 - Star Wars", "1.01 - Sant Louis", "1.02 - Toronto", "1.03 - Safari", "1.06 - Castle", "1.05 - Auditório (Inovação Reunião)", "1.07 - Mandela"] },
+            { bloco: "BEES", andar: "1º Andar", lado: "Esquerdo", salas: ["1.04 - Star Wars", "1.01 - Sant Louis", "1.02 - Toronto", "1.03 - Safari", "1.06 - Castle", "1.05 - Auditório", "1.07 - Mandela"] },
             { bloco: "BEES", andar: "1º Andar", lado: "Direito", salas: ["1F01, 1F02, 1F03 - Focus Room", "1.08 - Goose Brewhouse"] },
-            { bloco: "BEES", andar: "2º Andar", lado: "Esquerdo", salas: ["2.05 - Buenos Aires", "2.07 - People", "2.06 - Rio de Janeiro", "2.03 - Zeca Pagodinho", "2.02 - NY+SP - Vezza's Room", "2.01 - Leadership"] },
+            { bloco: "BEES", andar: "2º Andar", lado: "Esquerdo", salas: ["2.05 - Buenos Aires", "2.07 - People", "2.06 - Rio de Janeiro", "2.03 - Zeca Pagodinho", "2.02 - NY+SP", "2.01 - Leadership"] },
             { bloco: "BEES", andar: "2º Andar", lado: "Direito", salas: ["2F01, 2F02, 2F03 - Focus Room", "2.04 - Camarote Brahma"] },
             { bloco: "BEES", andar: "3º Andar", lado: "Esquerdo", salas: ["3.03 - Leuven", "3.02 - Meeting", "3.05 - Stephen Hawking", "3.04 - Auditório"] },
             { bloco: "BEES", andar: "3º Andar", lado: "Direito", salas: ["3F01, 3F02, 3F03 - Focus Room", "3.06 - Cerveja Deus"] },
-            
-            // Global
-            { bloco: "Global", andar: "Térreo", lado: "Lado Esquerdo", salas: ["Auditorio (de frente á padaria)"] },
-            { bloco: "Global", andar: "1º Andar", lado: "Lado Direito", salas: ["1.02 - Colorado Indica", "1.01 - Colorado Toca do Urso", "Sip - Smart", "Switch It Up", "Eat Food", "Ride Right", "1F01 - Focus Room", "1F02 - Focus Room", "Sala Lagoinha (Cor Laranja)", "Not For Minors", "Don't Drink", "Pace Your Drink"] },
+            { bloco: "Global", andar: "Térreo", lado: "Lado Esquerdo", salas: ["Auditorio"] },
+            { bloco: "Global", andar: "1º Andar", lado: "Lado Direito", salas: ["1.02 - Colorado Indica", "1.01 - Toca do Urso", "Sip - Smart", "Switch It Up", "Eat Food", "Ride Right", "1F01/1F02 - Focus", "Sala Lagoinha", "Not For Minors", "Don't Drink", "Pace Your Drink"] },
             { bloco: "Global", andar: "1º Andar", lado: "Lado Esquerdo", salas: ["1.09 - Wals Dubbel", "1.08 - Wals Niobium", "1.07 - Session Citra", "1.06 - Colorado Cauim"] },
-            { bloco: "Global", andar: "2º Andar", lado: "Lado Direito", salas: ["2.03 - Star", "2.01 - Hoegaarden", "2.02 - Adamy", "Drink Hour - Way", "Stay On - Count", "Balanced - Choices", "Cheers to Moderation"] },
-            { bloco: "Global", andar: "2º Andar", lado: "Lado Esquerdo", salas: ["2.09 - Becks After", "2.08 - Becks Esquenta", "2.07 - Stella Artois", "2.06 - Tripel Karmeliet (Corona)"] },
+            { bloco: "Global", andar: "2º Andar", lado: "Lado Direito", salas: ["2.03 - Star", "2.01 - Hoegaarden", "2.02 - Adamy", "Drink Hour", "Stay On", "Balanced", "Cheers"] },
+            { bloco: "Global", andar: "2º Andar", lado: "Lado Esquerdo", salas: ["2.09 - Becks After", "2.08 - Becks Esquenta", "2.07 - Stella Artois", "2.06 - Tripel Karmeliet"] },
             { bloco: "Global", andar: "3º Andar", lado: "Lado Direito", salas: ["3.01 - Goose Green Line"] },
-            { bloco: "Global", andar: "3º Andar", lado: "Lado Esquerdo", salas: ["3.08 - Bud Light Seltzer", "3.07 - Bud Light Platinum", "3.06 - Goose 312", "3.05 - Goose IPA", "3.04 - Bourbon Country (Cor Cinza)"] }
+            { bloco: "Global", andar: "3º Andar", lado: "Lado Esquerdo", salas: ["3.08 - Bud Light Seltzer", "3.07 - Bud Light Platinum", "3.06 - Goose 312", "3.05 - Goose IPA", "3.04 - Bourbon Country"] }
         ];
 
-        function normalize(str) {
-            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-        }
+        // Função utilitária para remover acentos
+        const removeAccents = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+        document.getElementById('printBtn').addEventListener('click', function() {
+            const element = document.getElementById('directoryContainer');
+            const opt = {
+                margin: [0.5, 0.5, 0.5, 0.5],
+                filename: 'Directorio_de_Salas.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        });
 
         function render(filter = "") {
             const container = document.getElementById('directoryContainer');
             container.innerHTML = "";
-            const keywords = normalize(filter).split(' ').filter(word => word !== '');
+            
+            // Normaliza a busca para ignorar acentos e case
+            const normalizedFilter = removeAccents(filter.toLowerCase());
+            const terms = normalizedFilter.split(' ').filter(t => t.length > 0);
 
-            dadosSalas.forEach(bloco => {
-                const textToSearch = normalize(`${bloco.bloco} ${bloco.andar} ${bloco.lado} ${bloco.salas.join(" ")}`);
-                const isMatch = keywords.every(k => textToSearch.includes(k));
-                
-                if (isMatch) {
-                    const card = document.createElement('div');
-                    card.className = "bg-white p-5 rounded-2xl shadow-sm border border-gray-200";
-                    // BEES amarelado, Global azulado
-                    const isBees = bloco.bloco === "BEES";
-                    card.innerHTML = `
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded ${isBees ? "bg-amber-100 text-amber-800" : "bg-blue-100 text-blue-700"}">${bloco.bloco}</span>
-                        </div>
-                        <h2 class="text-lg font-bold text-gray-900 mb-1">${bloco.andar}</h2>
-                        <h3 class="text-sm font-medium text-gray-500 mb-4">${bloco.lado}</h3>
-                        <ul class="space-y-2">
-                            ${bloco.salas.map(s => `<li class="text-sm text-gray-700 bg-gray-50 p-2 rounded-lg border border-gray-100">${s}</li>`).join('')}
-                        </ul>
-                    `;
-                    container.appendChild(card);
-                }
+            const grupos = dadosSalas.filter(d => {
+                const raw = `${d.bloco} ${d.andar} ${d.lado} ${d.salas.join(" ")}`;
+                const combined = removeAccents(raw.toLowerCase());
+                // Garante que TODOS os termos de busca existam na string combinada
+                return terms.every(term => combined.includes(term));
+            }).reduce((acc, item) => {
+                if (!acc[item.bloco]) acc[item.bloco] = {};
+                if (!acc[item.bloco][item.andar]) acc[item.bloco][item.andar] = [];
+                acc[item.bloco][item.andar].push(item);
+                return acc;
+            }, {});
+
+            const blocos = Object.entries(grupos);
+            blocos.forEach(([bloco, andares], idx) => {
+                container.innerHTML += `<div class="${idx > 0 ? 'page-break' : ''}">
+                    <h2 class="text-2xl font-black text-gray-800 mb-4 border-b-2 border-gray-800 pb-1">${bloco}</h2>
+                    ${Object.entries(andares).map(([andar, itens]) => `
+                        <h3 class="text-sm font-bold text-gray-500 mt-2 uppercase">${andar}</h3>
+                        ${itens.map(item => `
+                            <div class="bg-white p-2 rounded shadow-sm mb-2 border-l-4 ${bloco === 'BEES' ? 'border-amber-400' : 'border-blue-400'}">
+                                <p class="text-[10px] font-bold text-gray-400 uppercase">${item.lado}</p>
+                                <ul class="grid grid-cols-2 gap-1 mt-1">
+                                    ${item.salas.map(s => `<li class="bg-gray-50 px-2 py-0.5 rounded text-[10px] text-gray-700">${s}</li>`).join('')}
+                                </ul>
+                            </div>
+                        `).join('')}
+                    `).join('')}
+                </div>`;
             });
         }
 

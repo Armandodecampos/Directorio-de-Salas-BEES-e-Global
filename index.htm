@@ -55,9 +55,11 @@
                 if (isMatch) {
                     const card = document.createElement('div');
                     card.className = "bg-white p-5 rounded-2xl shadow-sm border border-gray-200";
+                    // BEES amarelado, Global azulado
+                    const isBees = bloco.bloco === "BEES";
                     card.innerHTML = `
                         <div class="flex items-center justify-between mb-3">
-                            <span class="text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded ${bloco.bloco === "BEES" ? "bg-blue-100 text-blue-700" : "bg-amber-100 text-amber-800"}">${bloco.bloco}</span>
+                            <span class="text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded ${isBees ? "bg-amber-100 text-amber-800" : "bg-blue-100 text-blue-700"}">${bloco.bloco}</span>
                         </div>
                         <h2 class="text-lg font-bold text-gray-900 mb-1">${bloco.andar}</h2>
                         <h3 class="text-sm font-medium text-gray-500 mb-4">${bloco.lado}</h3>
